@@ -2,19 +2,24 @@ use std::{path::{Path} , fs::{read_dir}};
 
 
 fn main() {
-    let root = read_dir(Path::new("./root")).unwrap();
+ recursive_dotfiles("./root")   
+}
+
+fn recursive_dotfiles(path:&str){
+
+    let root = read_dir(Path::new(path)).unwrap();
     for entry in root{
         if let Ok(e) = entry{
             let filename= e.file_name();
-            print!("{:?}",filename);
+            
             if "." == &filename.to_str().unwrap()[0..1]{
-                print!(" dotfile ");
-            }else{
-                print!(" non dotfile ");
+                println!("{:?}",e.path());
             }
 
             if let Ok(data) = e.metadata(){
-                print!(" - {:?}\n",data.file_type());
+                if data.is_dir(){
+                    recursive_dotfiles(e.path().to_str().unwrap())
+                }
             }
         }
     }
