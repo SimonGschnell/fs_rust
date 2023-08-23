@@ -10,7 +10,11 @@ fn main() {
 
 fn recursive_dotfiles(path:OsString){
 
-    let root = read_dir(PathBuf::from(path).as_path()).unwrap();
+    let root = match read_dir(PathBuf::from(path).as_path()){
+
+        Ok(path) => path,
+        Err(err) => {println!("{}",err);return}
+    };
     for entry in root{
         if let Ok(e) = entry{
             let filename= e.file_name();
